@@ -3,6 +3,8 @@ package com.adminRouter;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -78,8 +80,9 @@ public class AdminImp extends UnicastRemoteObject implements IAdminRouter {
 		IAdminRouter adminRouter;
 		try {
 			adminRouter = new AdminImp();
-			Naming.rebind("rmi://localhost:5000/admin", adminRouter);
-		} catch (RemoteException | MalformedURLException e) {
+			System.setProperty("java.rmi.server.hostname","192.168.137.6");
+			 LocateRegistry.createRegistry(1888).rebind("rmi://192.168.137.6:18080/admin", adminRouter);
+		} catch (RemoteException  e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
