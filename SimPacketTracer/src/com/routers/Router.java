@@ -7,6 +7,8 @@ import java.net.SocketException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,18 +40,22 @@ public class Router {
 		sc = new Scanner(System.in);
 	}
 
-	public void Registration() {
+	public void registration() {
 
 		try {
-			System.out.println("<<Router registration>>\n enter a port number for conx..");
+			System.out.println("<<Router registration>>\n enter a port number for connection :");
 			port = sc.nextInt();
-			System.out.println("enter your router name");
+			System.out.println("enter your router name :");
 			name = sc.next();
-			System.out.println("your router(" + name + ") listene to port :" + port);
+		
 			serverSocket = new ServerSocket(port);
+			 Registry registry = LocateRegistry.getRegistry("127.0.0.1", 18080);
+			 IAdminRouter adminRouter = (IAdminRouter) registry.lookup("adminRouter");
+			adminRouter.newRouter(this);
 			while (true) {
 				Socket socket;
 				try {
+					System.out.println("your router(" + name + ") listene to port :" + port);
 					System.out.println("wait new connection...");
 					socket = serverSocket.accept();
 					System.out.println("connection accepted...");
@@ -61,6 +67,7 @@ public class Router {
 				}
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			System.err.println("enter a valid port number to listene...");
 		}
 	}
@@ -70,7 +77,7 @@ public class Router {
 		int nbr;
 		String name;
 		int port;
-		System.out.println("existe a neighbor router run to this router ?");
+		System.out.println("exists a direct neighbor router  to this router ?(y/yes)");
 		Scanner sc = new Scanner(System.in);
 		resp = sc.nextLine();
 		if (resp.equals("y") || resp.equals("yes")) {
@@ -84,9 +91,7 @@ public class Router {
 
 			}
 
-		} else {
-			System.out.println("seccess...");
-		}
+		} 
 	}
 
 	public void generateRoutingTable() {
@@ -101,14 +106,14 @@ public class Router {
 	public static void main(String[] args) {
 		Router router = new Router();
 		try {
-			AdminImp adminRouter = new AdminImp();
-			adminRouter.newRouter(router);
+			router.addNeighbors();
+			router.registration();
+		
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		router.addNeighbors();
-		router.Registration();
+		
 
 	}
 }

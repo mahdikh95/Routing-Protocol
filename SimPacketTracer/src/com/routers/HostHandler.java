@@ -38,7 +38,7 @@ public class HostHandler extends Thread {
 		in = new ObjectInputStream(socket.getInputStream());
 		packet = new Packet();
 		try {
-			adminRouter = (IAdminRouter) Naming.lookup("rmi://localhost:5000/admin");
+			adminRouter = (IAdminRouter) Naming.lookup("rmi://192.168.137.6:18080/admin");
 		} catch (NotBoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

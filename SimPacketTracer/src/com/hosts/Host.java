@@ -9,6 +9,8 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.util.Scanner;
 
+import com.adminRouter.IAdminRouter;
+
 public class Host {
 
 	private static Socket s;
@@ -18,6 +20,9 @@ public class Host {
 	private static ObjectInputStream in;
 	private String name;
 	private Packet packet;
+	private int routerPort;
+
+
 
 	public Host() {
 		packet = new Packet();
@@ -55,12 +60,12 @@ public class Host {
 		try {
 
 			Host host = new Host();
-			host.hostRegistre();
-			NetworkToHost ntu = new NetworkToHost(s);
-			ntu.start();
-
 			try { // invoke rmi to know new connection host
-				IAdminRouter adminRouter = (IAdminRouter) Naming.lookup("rmi://localhost:5000/admin");
+				IAdminRouter adminRouter = (IAdminRouter) Naming.lookup("rmi://192.168.137.6:18080/admin");
+				System.out.println("enter your name : ");
+				host.name =host.keyb.nextLine();
+				System.out.println("enter a router IP(port) be connect to.. ");
+				host.port =host.keyb.nextInt();
 				adminRouter.newHost(port, host.getName());
 			} catch (NotBoundException e) {
 				// TODO Auto-generated catch block
@@ -85,7 +90,15 @@ public class Host {
 				} while (!msg.equals("close"));
 			}
 		} catch (IOException ex) {
+			ex.printStackTrace();
 			System.err.println("please check the Router port is running");
 		}
+	}
+	public int getRouterPort() {
+		return routerPort;
+	}
+
+	public void setRouterPort(int routerPort) {
+		this.routerPort = routerPort;
 	}
 }
