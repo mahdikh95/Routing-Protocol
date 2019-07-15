@@ -18,23 +18,29 @@ public class AdminImp extends UnicastRemoteObject implements IAdminRouter {
 
 	private static final long serialVersionUID = 1L;
 
+
+
 	private static int i = 1;
 
-	private List<Router> routers = new ArrayList<>();
+	
+
+	private  List<Router> routers = new ArrayList<>();
+
 
 	public AdminImp() throws RemoteException {
-		super();
+		 super();
 	}
-
+	
 	@Override
-	public void newRouter(Router router) throws RemoteException {
+	public void newRouter(Router router)  throws RemoteException {
 		routers.add(router);
 	}
 
+	
 	@Override
 	public void newHost(int port, String newDest) {
 		Router router = howHasThisPort(port);
-		router.routingTable.add(new RouterEntry(newDest, 0, "directly", -1));
+		router.routingTable.add(new RouterEntry(newDest,0, "directly", -1));
 		updateRT(router, newDest);
 		i = 1;
 	}
@@ -67,11 +73,12 @@ public class AdminImp extends UnicastRemoteObject implements IAdminRouter {
 			}
 		}
 		System.out.println("");
-		System.out.println("\"|\" + router name + \" | \" + port ");
-		for (Router r : neighborRouter) {
-			System.out.println("|" + r.name + " | " + r.port);
+		System.out.println("\"|\" + router name + \" | \" + port " );
+		for(Router r : neighborRouter)
+		{
+			System.out.println("|" + r.name + " | " + r.port );
 		}
-
+		
 		return neighborRouter;
 	}
 
@@ -82,14 +89,16 @@ public class AdminImp extends UnicastRemoteObject implements IAdminRouter {
 		}
 		return null;
 	}
-
+	
 	private static Registry registry;
 
 	public static void main(String[] args) {
-
+	
 		try {
-			IAdminRouter adminRouter = new AdminImp();
-			Naming.rebind("adminRouter", UnicastRemoteObject.toStub(adminRouter));
+			IAdminRouter  adminRouter = new AdminImp();
+			System.setProperty("java.rmi.server.hostname","192.168.137.6");
+			 LocateRegistry.createRegistry(1888).rebind("rmi://192.168.137.6:18080/admin", adminRouter);
+			 System.out.println("admin has been initilized");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -1,5 +1,6 @@
 package com.routers;
 
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -20,7 +21,11 @@ import javax.sound.midi.Soundbank;
 import com.adminRouter.AdminImp;
 import com.adminRouter.IAdminRouter;
 
-public class Router {
+public class Router  implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	public int port;
 	public String name;
 	private static final String ip = "localhost";
@@ -34,23 +39,24 @@ public class Router {
 
 	public List<RouterEntry> routingTable = new ArrayList<>();
 
-	private Scanner sc;
+	
 
 	public Router() {
-		sc = new Scanner(System.in);
 	}
 
 	public void registration() {
 
 		try {
+			 Scanner sc = new Scanner(System.in);
+
 			System.out.println("<<Router registration>>\n enter a port number for connection :");
 			port = sc.nextInt();
 			System.out.println("enter your router name :");
 			name = sc.next();
 		
 			serverSocket = new ServerSocket(port);
-			 Registry registry = LocateRegistry.getRegistry("127.0.0.1", 18080);
-			 IAdminRouter adminRouter = (IAdminRouter) registry.lookup("adminRouter");
+			 Registry registry = LocateRegistry.getRegistry(1888);
+			 IAdminRouter adminRouter = (IAdminRouter) registry.lookup("rmi://192.168.137.6:18080/admin");
 			adminRouter.newRouter(this);
 			while (true) {
 				Socket socket;
